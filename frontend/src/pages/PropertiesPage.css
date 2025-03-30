@@ -1,0 +1,44 @@
+.properties-page {
+  min-height: 100vh;
+  background-color: #121212;
+  padding: 2rem 0;
+  color: #ffffff;
+}
+
+.properties-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.properties-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+}
+
+.properties-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.properties-count {
+  color: #a0a0a0;
+  font-size: 0.95rem;
+}
+
+/* Media query for desktop screens */
+@media (min-width: 768px) {
+  .properties-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .properties-title {
+    margin-bottom: 0;
+  }
+} 

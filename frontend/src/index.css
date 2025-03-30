@@ -1,0 +1,116 @@
+/* Global Netflix-inspired styling */
+:root {
+  --netflix-bg: #141414;
+  --netflix-bg-light: #1d1d1d;
+  --netflix-red: #e50914;
+  --netflix-red-hover: #f40612;
+  --netflix-text: #fff;
+  --netflix-text-secondary: #e5e5e5;
+  --netflix-text-muted: #b3b3b3;
+  --netflix-input-bg: #333;
+  --netflix-input-bg-focus: #454545;
+  --netflix-success: #39e58c;
+  --netflix-error: #f55661;
+  --netflix-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  --netflix-transition: 0.3s;
+  
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background-color: var(--netflix-bg);
+  color: var(--netflix-text);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  width: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--netflix-text-secondary);
+  font-weight: 700;
+  margin-top: 0;
+}
+
+a {
+  color: var(--netflix-text-secondary);
+  text-decoration: none;
+  transition: color var(--netflix-transition);
+  font-weight: 500;
+}
+
+a:hover {
+  color: var(--netflix-text);
+}
+
+button {
+  padding: 0.8rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: var(--netflix-red);
+  color: var(--netflix-text);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color var(--netflix-transition), transform 0.1s;
+  font-family: inherit;
+}
+
+button:hover:not(:disabled) {
+  background-color: var(--netflix-red-hover);
+  transform: translateY(-2px);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button:disabled {
+  background-color: var(--netflix-text-muted);
+  cursor: not-allowed;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 2px solid rgba(229, 9, 20, 0.5);
+}
+
+input, select, textarea {
+  padding: 1rem;
+  font-size: 1rem;
+  background-color: var(--netflix-input-bg);
+  color: var(--netflix-text);
+  border: none;
+  border-radius: 4px;
+  transition: background-color var(--netflix-transition);
+  font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+  background-color: var(--netflix-input-bg-focus);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.5);
+}
