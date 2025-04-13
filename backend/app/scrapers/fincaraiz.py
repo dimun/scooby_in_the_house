@@ -1,6 +1,7 @@
 import re
 import logging
 import asyncio
+import random
 from typing import List, Dict, Any, Optional, AsyncGenerator
 import aiohttp
 from bs4 import BeautifulSoup
@@ -66,7 +67,7 @@ class FincaRaizScraper:
                 async with self.session.get(page_url) as response:
                     if response.status != 200:
                         logger.error(f"Failed to fetch page {page}: {response.status}")
-                        break
+                        continue
 
                     html = await response.text()
                     soup = BeautifulSoup(html, "lxml")
@@ -79,8 +80,10 @@ class FincaRaizScraper:
 
                     yield listings
 
-                    # Add a small delay between requests
-                    await asyncio.sleep(2)
+                    # Add a random delay between 2-5 seconds between requests
+                    delay = random.uniform(2, 5)
+                    logger.debug(f"Waiting {delay:.2f} seconds before next request")
+                    await asyncio.sleep(delay)
 
             except Exception as e:
                 logger.error(f"Error scraping page {page}: {str(e)}")
@@ -120,6 +123,8 @@ class FincaRaizScraper:
         Extract property listings from a page
         """
         listings = []
+        city = city[0].upper() + city[1:]
+        region = region[0].upper() + region[1:]
 
         # Find all property cards with the listingCard class
         property_cards = soup.find_all("div", class_="listingCard")
