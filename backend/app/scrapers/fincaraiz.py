@@ -86,6 +86,33 @@ class FincaRaizScraper:
                 logger.error(f"Error scraping page {page}: {str(e)}")
                 break
 
+    @staticmethod
+    def _extract_property_type(card: BeautifulSoup) -> Optional[str]:
+        """Extract property type from card"""
+        title_element = card.find("span", class_="lc-title")
+        if not title_element:
+            return None
+
+        text = title_element.get_text(strip=True)
+        if " en " in text:
+            return text.split(" en ")[0]
+        return None
+
+    @staticmethod
+    def _generate_title(property_type: Optional[str], city: str, surface: Optional[float], surface_unit: Optional[str]) -> str:
+        """Generate title in format: {property_type} en {city} - {surface} {surface_unit}"""
+        parts = []
+        
+        if property_type:
+            parts.append(f"{property_type} en {city}")
+        else:
+            parts.append(f"{city}")
+        
+        if surface is not None and surface_unit:
+            parts.append(f"{surface} {surface_unit}")
+        
+        return " - ".join(parts) if parts else ""
+
     def _extract_listings(
         self, soup: BeautifulSoup, city: str, region: str
     ) -> List[PropertyCreate]:
@@ -123,41 +150,24 @@ class FincaRaizScraper:
                 price_text = card.find(text=re.compile(r"\$\s*[\d.,]+"))
                 price = self._extract_price(price_text if price_text else "")
 
-                # Extract rooms
-                rooms_text = card.find(text=re.compile(r"(\d+)\s*Habs", re.IGNORECASE))
-                rooms = self._extract_number(rooms_text if rooms_text else "")
+                # Extract rooms, bathrooms and surface from typology tag
+                typology_tag = card.find("div", class_="lc-typologyTag")
+                rooms = None
+                bathrooms = None
+                surface = None
+                surface_unit = None
 
-                # Extract bathrooms
-                bathrooms_text = card.find(
-                    text=re.compile(r"(\d+)\s*Baños", re.IGNORECASE)
-                )
-                bathrooms = self._extract_number(
-                    bathrooms_text if bathrooms_text else ""
-                )
+                if typology_tag:
+                    typology_text = typology_tag.get_text(strip=True)
+                    rooms = self._extract_rooms(typology_text)
+                    bathrooms = self._extract_bathrooms(typology_text)
+                    surface, surface_unit = self._extract_surface(typology_text)
 
-                # Extract surface
-                surface_text = card.find(
-                    text=re.compile(r"(\d+[\.,]?\d*)\s*m²", re.IGNORECASE)
-                )
-                surface, surface_unit = self._extract_surface(
-                    surface_text if surface_text else ""
-                )
+                # Extract property type
+                property_type = self._extract_property_type(card)
 
-                # Extract property type and title
-                title_elements = card.find_all(
-                    lambda tag: tag.name == "div" and tag.get_text(strip=True)
-                )
-                property_type = None
-                title = None
-
-                for element in title_elements:
-                    text = element.get_text(strip=True)
-                    if "en Venta" in text or "en venta" in text:
-                        property_type = (
-                            text.split(" en ")[0] if " en " in text else None
-                        )
-                        title = text
-                        break
+                # Generate title
+                title = self._generate_title(property_type, city, surface, surface_unit)
 
                 # Truncate title to fit the database column (max 256 chars)
                 if title and len(title) > 256:
@@ -224,16 +234,42 @@ class FincaRaizScraper:
             return None, None
 
         # Find the numeric part and the unit
-        match = re.search(r"([\d.,]+)\s*([a-zA-Z²]+)", text)
+        match = re.search(r"(\d+)\s*m²", text)
         if match:
             try:
-                # Replace comma with dot for decimal point
-                value = float(match.group(1).replace(",", "."))
-                unit = match.group(2)
-                return value, unit
+                value = float(match.group(1))
+                return value, "m²"
             except (ValueError, TypeError):
                 pass
         return None, None
+
+    @staticmethod
+    def _extract_rooms(text: str) -> Optional[int]:
+        """Extract number of rooms from text"""
+        if not text:
+            return None
+
+        match = re.search(r"(\d+)\s*Habs?", text)
+        if match:
+            try:
+                return int(match.group(1))
+            except (ValueError, TypeError):
+                pass
+        return None
+
+    @staticmethod
+    def _extract_bathrooms(text: str) -> Optional[int]:
+        """Extract number of bathrooms from text"""
+        if not text:
+            return None
+
+        match = re.search(r"(\d+)\s*Baños", text)
+        if match:
+            try:
+                return int(match.group(1))
+            except (ValueError, TypeError):
+                pass
+        return None
 
     def _extract_image_urls(self, card: BeautifulSoup) -> List[str]:
         """
