@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import List, Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 
 from app.models.task import Task
@@ -37,7 +37,7 @@ class TaskRepository:
             property_type=task_data.get('property_type'),
             max_pages=task_data.get('max_pages'),
             status=task_data.get('status', 'pending'),
-            start_time=task_data.get('start_time')
+            start_time=task_data.get('start_time', datetime.now(timezone.utc))
         )
         self.db.add(new_task)
         self.db.commit()
@@ -64,7 +64,7 @@ class TaskRepository:
         update_data = {"status": status}
         
         if status == "completed":
-            update_data["end_time"] = datetime.now()
+            update_data["end_time"] = datetime.now(timezone.utc)
             if properties_found is not None:
                 update_data["properties_found"] = properties_found
                 
@@ -75,7 +75,7 @@ class TaskRepository:
                     update_data["duration_seconds"] = int(duration)
         
         elif status == "failed" and error:
-            update_data["end_time"] = datetime.now()
+            update_data["end_time"] = datetime.now(timezone.utc)
             update_data["error"] = error
             
             if task := self.get_task(task_id):

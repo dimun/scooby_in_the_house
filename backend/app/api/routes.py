@@ -2,11 +2,10 @@ import asyncio
 from fastapi import APIRouter, HTTPException, Query, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List, Optional
-import logging
 
 from app.db import get_db
 from app.schemas.property import PropertyResponse, ScraperRequest
-from app.schemas.task import TaskResponse, TaskListResponse, ScrapingLogResponse
+from app.schemas.task import TaskListResponse, ScrapingLogResponse
 from app.core.usecases import PropertyUseCases, ScraperUseCases
 from app.services.scraper_service import get_task_status, get_task_logs
 
@@ -63,7 +62,6 @@ async def start_scraper(
     scraper_usecase = ScraperUseCases(db)
 
     def run_scraper_sync():
-        """Función envoltura para ejecutar la tarea asíncrona"""
         asyncio.run(scraper_usecase.start_scraper(
             city=request.city,
             region=request.region,
