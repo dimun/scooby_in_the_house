@@ -5,7 +5,6 @@ import sys
 
 from app.api.routes import router as api_router
 from app.core.config import settings
-from app.db import Base, engine
 
 # Configure logging
 logging.basicConfig(
@@ -16,8 +15,7 @@ logging.basicConfig(
     ]
 )
 
-# Create database tables
-Base.metadata.create_all(bind=engine)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
