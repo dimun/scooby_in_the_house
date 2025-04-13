@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, Dict, Any, List
 from datetime import datetime
 
@@ -34,8 +34,7 @@ class TaskResponse(TaskBase):
     duration_seconds: Optional[int] = None
     cmetadata: Optional[Dict[str, Any]] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ScrapingLogResponse(BaseModel):

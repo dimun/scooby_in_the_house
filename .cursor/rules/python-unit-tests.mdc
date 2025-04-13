@@ -1,0 +1,21 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Python unit tests
+
+- Use always pytest and not unittest
+- Use autospec for mocking when possible
+- Structure of the tests has to be like:
+
+```
+test_{function}_should_{assertion}_when_{condition}:
+    # Arrange
+    ...
+    # Act
+    ...
+    # Assert
+    ...
+```
