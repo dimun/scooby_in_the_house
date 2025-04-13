@@ -2,10 +2,9 @@ import re
 import logging
 import asyncio
 import random
-from typing import List, Dict, Any, Optional, AsyncGenerator
+from typing import List, Optional, AsyncGenerator
 import aiohttp
 from bs4 import BeautifulSoup
-from sqlalchemy.orm import Session
 from app.schemas.property import PropertyCreate
 
 

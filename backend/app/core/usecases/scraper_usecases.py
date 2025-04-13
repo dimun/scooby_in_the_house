@@ -13,7 +13,7 @@ class ScraperUseCases:
         city: str,
         region: str,
         property_types: List[str],
-        max_pages: Optional[int] = 5
+        max_pages: int
     ):
         """
         Prepare and start a scraping job

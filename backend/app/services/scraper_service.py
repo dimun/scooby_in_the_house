@@ -89,9 +89,9 @@ async def scrape_properties(
     city: str,
     region: str,
     property_type: str,
-    max_pages: int = 5,
-    db: Session = None,
-    task_id: str = None,
+    max_pages: int,
+    db: Session,
+    task_id: str,
 ) -> str:
     """
     Run the property scraper and save results to the database
@@ -166,7 +166,7 @@ def get_task_logs(
     return logs[-limit:] if logs else []
 
 
-def get_task_status(task_id: Optional[str] = None, db: Session = None) -> Any:
+def get_task_status(task_id: str, db: Session) -> Any:
     """
     Get task status from database
 

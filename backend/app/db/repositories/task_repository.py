@@ -65,10 +65,10 @@ class TaskRepository:
         return task
 
     def update_task_status(
-        self, task_id: str, status: str, properties_found: int = None, error: str = None
+        self, task_id: str, status: str, properties_found: Optional[int] = None, error: Optional[str] = None
     ) -> Optional[Task]:
         """Update task status and related fields"""
-        update_data = {"status": status}
+        update_data: Dict[str, Any] = {"status": status}
 
         if properties_found is not None:
             update_data["properties_found"] = properties_found
