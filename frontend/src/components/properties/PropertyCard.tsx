@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Property } from '../../api/propertiesApi';
 import './PropertyCard.css'; // We'll create this file next
 
@@ -7,13 +7,67 @@ interface PropertyCardProps {
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   const formatPrice = (price: number | null) => {
     if (price === null) return 'Price not available';
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(price);
   };
 
+  const handlePrevImage = () => {
+    if (property.image_urls && property.image_urls.length > 0) {
+      setCurrentImageIndex((prev) => 
+        prev === 0 ? property.image_urls!.length - 1 : prev - 1
+      );
+    }
+  };
+
+  const handleNextImage = () => {
+    if (property.image_urls && property.image_urls.length > 0) {
+      setCurrentImageIndex((prev) => 
+        prev === property.image_urls!.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
   return (
     <div className="property-card">
+      {/* Image Carousel */}
+      {property.image_urls && property.image_urls.length > 0 ? (
+        <div className="property-image-container">
+          <img 
+            src={property.image_urls[currentImageIndex]} 
+            alt={property.title || 'Property image'} 
+            className="property-image"
+          />
+          {property.image_urls.length > 1 && (
+            <>
+              <button 
+                className="image-nav-button prev" 
+                onClick={handlePrevImage}
+                aria-label="Previous image"
+              >
+                &lt;
+              </button>
+              <button 
+                className="image-nav-button next" 
+                onClick={handleNextImage}
+                aria-label="Next image"
+              >
+                &gt;
+              </button>
+              <div className="image-counter">
+                {currentImageIndex + 1} / {property.image_urls.length}
+              </div>
+            </>
+          )}
+        </div>
+      ) : (
+        <div className="property-image-placeholder">
+          No images available
+        </div>
+      )}
+
       <div className="property-content">
         {/* Header with title and price */}
         <div className="property-header">

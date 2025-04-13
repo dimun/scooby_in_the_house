@@ -13,6 +13,7 @@ export interface Property {
   city: string | null;
   region: string | null;
   property_type: string | null;
+  image_urls: string[] | null;
   created_at: string;
   updated_at: string | null;
 }
