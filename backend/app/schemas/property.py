@@ -14,6 +14,7 @@ class PropertyBase(BaseModel):
     city: Optional[str] = None
     region: Optional[str] = None
     property_type: Optional[str] = None
+    image_urls: Optional[List[HttpUrl]] = None
 
 
 class PropertyCreate(PropertyBase):
